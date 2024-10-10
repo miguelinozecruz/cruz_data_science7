@@ -1,5 +1,2 @@
 openai>=1.0.0
 streamlit>=1.0.0
-git add requirements.txt
-git commit -m "Adicionando dependências OpenAI e Streamlit"
-git push origin main
