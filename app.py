@@ -2,15 +2,16 @@ import openai
 import streamlit as st
 import os
 
-# Obtém a chave da API da OpenAI do segredo do GitHub
+# Chave de API da OpenAI a partir de variáveis de ambiente
 openai.api_key = os.getenv("OPENAI_API_KEY")
 
-# ID do seu agente específico
+# ID do seu agente específico (opcional, se aplicável)
 AGENT_ID = "asst_78f9iKPVOB39CBgxne4hZyZX"
 
 # Título do aplicativo no Streamlit
 st.markdown("<h1 style='text-align: center;'>Cruz Data Science</h1>", unsafe_allow_html=True)
 st.markdown("<h3 style='text-align: center;'>Soluções Exclusivas em Ciência de Dados Para Cada Cliente</h3>", unsafe_allow_html=True)
+
 
 # Exibir contatos abaixo do título
 st.markdown("**Contatos:**")
@@ -35,13 +36,13 @@ perguntas_pre_definidas = [
 # Função para interagir com o agente de IA
 def conversar_com_agente(mensagem_usuario):
     response = openai.ChatCompletion.create(
-        model="gpt-4",  # Modelo específico usado no agente
+        model="gpt-4",  # Modelo atualizado da OpenAI
         messages=[
             {"role": "system", "content": "Você é o assistente de Cruz Data Science. Responda somente de acordo com os serviços de ciência de dados oferecidos. Não responda a perguntas fora deste escopo."},
             {"role": "user", "content": mensagem_usuario}
         ]
     )
-    return response.choices[0].message["content"]
+    return response['choices'][0]['message']['content']
 
 # Função chamada ao enviar a mensagem
 def enviar_mensagem():
