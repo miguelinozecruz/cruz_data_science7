@@ -2,16 +2,26 @@ import openai
 import streamlit as st
 import os
 
-# Chave de API da OpenAI a partir de variáveis de ambiente
-openai.api_key = os.getenv("OPENAI_API_KEY")
+# Pegue a chave da API da OpenAI a partir de variáveis de ambiente ou defina diretamente
+openai.api_key = os.getenv("OPENAI_API_KEY")  # Defina sua chave de API aqui se não usar variável de ambiente
 
-# ID do seu agente específico (opcional, se aplicável)
-AGENT_ID = "asst_78f9iKPVOB39CBgxne4hZyZX"
+# Função para interagir com o agente de IA usando o GPT-3.5-turbo
+def conversar_com_agente(mensagem_usuario):
+    try:
+        response = openai.ChatCompletion.create(
+            model="gpt-3.5-turbo",  # Usando o modelo GPT-3.5-turbo
+            messages=[
+                {"role": "system", "content": "Você é o assistente da Cruz Data Science. Responda somente sobre os serviços de ciência de dados."},
+                {"role": "user", "content": mensagem_usuario}
+            ]
+        )
+        return response['choices'][0]['message']['content']
+    except Exception as e:
+        return f"Erro ao se comunicar com o agente de IA: {str(e)}"
 
 # Título do aplicativo no Streamlit
-st.markdown("<h1 style='text-align: center;'>Cruz Data Science</h1>", unsafe_allow_html=True)
+st.markdown("<h1 style='text-align: center;'>Cruz Data Science</h1>", unsafe_allow_html=True) 
 st.markdown("<h3 style='text-align: center;'>Soluções Exclusivas em Ciência de Dados Para Cada Cliente</h3>", unsafe_allow_html=True)
-
 
 # Exibir contatos abaixo do título
 st.markdown("**Contatos:**")
@@ -24,25 +34,6 @@ if "messages" not in st.session_state:
 
 if "user_input" not in st.session_state:
     st.session_state.user_input = ""
-
-# Perguntas pré-definidas
-perguntas_pre_definidas = [
-    "Quais serviços de ciência de dados você oferece?",
-    "Como a Cruz Data Science pode me ajudar a melhorar meus processos?",
-    "Você pode me explicar sobre análise preditiva?",
-    "O que é automação de dados e como ela funciona?"
-]
-
-# Função para interagir com o agente de IA
-def conversar_com_agente(mensagem_usuario):
-    response = openai.ChatCompletion.create(
-        model="gpt-4",  # Modelo atualizado da OpenAI
-        messages=[
-            {"role": "system", "content": "Você é o assistente de Cruz Data Science. Responda somente de acordo com os serviços de ciência de dados oferecidos. Não responda a perguntas fora deste escopo."},
-            {"role": "user", "content": mensagem_usuario}
-        ]
-    )
-    return response['choices'][0]['message']['content']
 
 # Função chamada ao enviar a mensagem
 def enviar_mensagem():
@@ -58,14 +49,22 @@ def enviar_mensagem():
         # Limpar a caixa de input
         st.session_state.user_input = ""
 
-# Mostrar as perguntas pré-definidas como botões
+# Perguntas pré-definidas
 st.write("### Perguntas sugeridas:")
+perguntas_pre_definidas = [
+    "Quais serviços de ciência de dados você oferece?",
+    "Como a Cruz Data Science pode me ajudar a melhorar meus processos?",
+    "Você pode me explicar sobre análise preditiva?",
+    "O que é automação de dados e como ela funciona?"
+]
+
+# Exibir as perguntas pré-definidas como botões
 for pergunta in perguntas_pre_definidas:
     if st.button(pergunta):
         st.session_state.user_input = pergunta
         enviar_mensagem()
 
-# Mostrar o histórico de conversas acima
+# Exibir o histórico de conversas acima
 for mensagem in st.session_state.messages:
     if mensagem["role"] == "user":
         st.write(f"Você: {mensagem['content']}")
